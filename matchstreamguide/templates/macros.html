@@ -1,0 +1,200 @@
+{% macro write_font_stylesheet() -%}
+	<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Vollkorn">
+{%- endmacro %}
+
+{% macro write_links(links) -%}
+	{% for page_name, text in links %}
+		<li{% if page_name == selected_page %} class="selected"{% endif %}>
+			<a href="{{ url_for(page_name) }}">{{ text }}</a>
+		</li>
+	{% endfor %}
+{%- endmacro %}
+
+
+{% macro write_small_game_icon(game) -%}
+	{% if game == "tf2" %}
+		<img class="game-logo" src="{{ url_for('static', filename='tf2-small.png') }}" />
+	{% endif %}
+{%- endmacro %}
+
+{% macro write_large_game_icon(game) -%}
+	{% if game == "tf2" %}
+		<img class="game-logo" src="{{ url_for('static', filename='tf2-large.png') }}" />
+	{% endif %}
+{%- endmacro %}
+
+
+{% macro write_small_external_link(external_link) -%}
+	<a href="{{ external_link }}" target="_blank">
+		<img class="external-link" src="{{ url_for('static', filename='external-link-small.png') }}" />
+	</a>
+{%- endmacro %}
+
+{% macro write_large_external_link(external_link) -%}
+	<a href="{{ external_link }}" target="_blank">
+		<img class="external-link" src="{{ url_for('static', filename='external-link-large.png') }}" />
+	</a>
+{%- endmacro %}
+
+
+{% macro write_count(count) -%}
+	x<span>{{ count }}</span>
+{%- endmacro %}
+
+{% macro write_star_with_count(is_starred, num_stars, logged_in=false) -%}
+	{% if is_starred %}
+		{% set starImgSrc = url_for('static', filename='star-full-dark.png') %}
+		{% set starDivClass = "counts selected" %}
+	{% else %}
+		{% set starImgSrc = url_for('static', filename='star-empty-light.png') %}
+		{% set starDivClass = "counts" %}
+	{% endif %}
+
+	<div class="{{ starDivClass }}">
+		<img src="{{ starImgSrc }}"{% if logged_in %} class="togglable"{% endif %} />{{ write_count(num_stars) }}
+	</div>
+{%- endmacro %}
+
+{% macro write_stream_with_count(is_streamed, num_streams) -%}
+	{% if is_streamed %}
+		<img src="TODO" />
+	{% else %}
+		<img src="TODO" />
+	{% endif %}
+	<span>{{ write_count(num_streams) }}</span>
+{%- endmacro %}
+
+
+{% macro write_division(game, division, should_write_external_link) -%}
+	{% set league_id = division|league_id %}
+	{% if league_id %}
+		<img class="league-logo" src="{{ url_for('static', filename='%s.png'|format(league_id)) }}" />
+		{{ division|division_name }}
+		{{ write_small_external_link(division|division_external_url) if should_write_external_link }}
+	{% endif %}
+{%- endmacro %}
+
+
+{% macro write_match_list_element(match, should_write_star_with_count) -%}
+	<li>
+		<a href="{{ url_for('match_details', match_id=match|match_url_part) }}">
+			{{ write_star_with_count(match.is_starred, match.num_stars) if should_write_star_with_count }}
+			{{ write_small_game_icon(match.game) }}
+			<div>
+				<div class="teams">
+					<span class="name">{{ match.team1.name }}</span>
+					vs
+					<span class="name">{{ match.team2.name }}</span>
+				</div>
+				<div class="datetime">{{ match.time|readable_datetime }}</div>
+			</div>
+		</a>
+	</li>
+{%- endmacro %}
+
+{% macro write_team_list_element(team) -%}
+	<li>
+		<a href="{{ url_for('team_details', team_id=team|team_url_part) }}">
+			{{ write_small_game_icon(team.game) }}
+			{{ write_star_with_count(team.is_starred, team.num_stars) }}
+			<span class="name">{{ team.name }}</span>
+		</a>
+	</li>
+{%- endmacro %}
+
+{% macro write_streamer_list_element(streamer) -%}
+	<li>
+		<a href="{{ streamer|best_user_url }}">
+			{% set picture_src = streamer|best_streamer_small_picture %}
+			{% if picture_src %}
+				<img class="picture" src="{{ picture_src }}" />
+			{% endif %}
+			{{ write_star_with_count(streamer.is_starred, streamer.num_stars) }}
+			<span class="name">{{ streamer.name }}</span>
+		</a>
+	</li>
+{%- endmacro %}
+
+
+{% macro write_pagination_part(query_params, sort_by_time) -%}
+	{% set value0, value1 = query_params[1], query_params[3] %}
+	{% if value0 or value1 %}
+		{% if sort_by_time %}
+			{% set value0 = value0|datetime_query_param %}
+		{% endif %}
+		{% set key0, key1 = query_params[0], query_params[2] %}
+		<a class="direction" href="?{{ key0 }}={{ value0 }}&{{ key1 }}={{ value1 }}">{{ caller() }}</a>
+	{% else %}
+		<span class="direction">{{ caller() }}</span>
+	{% endif %}
+{%- endmacro %}
+
+{% macro write_pagination(
+		prev_title, prev_query_params, next_title, next_query_params, sort_by_time) -%}
+	<div id="pagination">
+		{% call write_pagination_part(prev_query_params, sort_by_time) %}
+			&laquo; {{ prev_title }}
+		{% endcall %}
+		{% call write_pagination_part(next_query_params, sort_by_time) %}
+			{{ next_title }} &raquo;
+		{% endcall %}
+	</div>
+{%- endmacro %}
+
+{% macro write_previous_next_pagination(
+		prev_query_params, next_query_params, sort_by_time=false) -%}
+	{{ write_pagination(
+			'Previous', prev_query_params, 'Next', next_query_params, sort_by_time) }}
+{%- endmacro %}
+
+{% macro write_earlier_later_pagination(
+		prev_query_params, next_query_params, sort_by_time=true) -%}
+	{{ write_pagination(
+			'Earlier', prev_query_params, 'Later', next_query_params, sort_by_time) }}
+{%- endmacro %}
+
+
+{% macro write_sign_in_instructions() -%}
+	Sign in <a href="{{ url_for('log_in_steam') }}">through Steam</a> or <a href="{{ url_for('log_in_twitch') }}">through Twitch</a>.
+{%- endmacro %}
+
+
+{% macro write_star_matches_reason() -%}
+	Browse <a href="{{ url_for('all_matches') }}">all matches</a> and star any upcoming matches that you don't want to miss.
+{%- endmacro %}
+
+{% macro write_star_teams_reason() -%}
+	Browse <a href="{{ url_for('all_teams') }}">all teams</a> and star any teams whose upcoming matches you don't want to miss.
+{%- endmacro %}
+
+{% macro write_star_streamers_reason() -%}
+	Browse <a href="{{ url_for('all_streamers') }}">all streamers</a> and star any streamers whose upcoming streams you don't want to miss.
+{%- endmacro %}
+
+
+{% macro write_star_matches_effect() -%}
+	If a upcoming match you starred is being streamed
+{%- endmacro %}
+
+{% macro write_star_teams_effect() -%}
+	If a team you starred is playing in an upcoming match that is being streamed
+{%- endmacro %}
+
+{% macro write_star_streamers_effect() -%}
+	If a streamer you starred is streaming an upcoming match
+{%- endmacro %}
+
+
+{% macro write_star_explanation(starred_type, logged_in) -%}
+	<div class="explanation">
+		<h3>Why star {{ starred_type }}?</h3>
+		<p>Here's how it works:</p>
+		<ol>
+			{% if not logged_in %}
+				<li>{{ write_sign_in_instructions() }}</li>
+			{% endif %}
+			{{ caller() }}
+		</ol>
+	</div>
+{%- endmacro %}
+

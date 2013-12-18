@@ -1,0 +1,41 @@
+{% extends "layout.html" %}
+{% import "macros.html" as macros %}
+
+{% block page_name %}{{ streamer.name }}{% endblock page_name %}
+
+{% block content %}
+	<div id="streamer" class="main-data clearfix">
+		{% set picture_src = streamer|best_streamer_large_picture %}
+		{% if picture_src %}
+			<img class="picture" src="{{ picture_src }}" />
+		{% endif %}
+		<h3>
+			{{ streamer.name }}
+			{{ macros.write_large_external_link(streamer|user_external_url) }}
+		</h3>
+		{{ macros.write_star_with_count(streamer.is_starred, streamer.num_stars, logged_in=g.logged_in) }}
+	</div>
+
+	{% if streamer.matches %}
+		<h3 class="header">Upcoming streamed matches:</h3>
+		<ul class="data-list match-list">
+		{% for match in streamer.matches %}
+			{{ macros.write_match_list_element(match, true) }}
+		{% endfor %}
+		</ul>
+
+		{% set prev_query_params = ('prev_time', streamer.prev_time, 'prev_match_id', streamer.prev_match_id) %}
+		{% set next_query_params = ('next_time', streamer.next_time, 'next_match_id', streamer.next_match_id) %}
+		{{ macros.write_earlier_later_pagination(prev_query_params, next_query_params) }}
+	{% else %}
+		<h3 class="header">No upcoming streamed matches</h3>
+	{% endif %}
+
+	{% if g.logged_in %}
+		<script>
+			{% set post_url = url_for("update_streamer", streamer_id=streamer.streamer_id) %}
+			$.addStarRollover($("#streamer div.counts img"), "{{ post_url }}")
+		</script>
+	{% endif %}
+{% endblock content %}
+

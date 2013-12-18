@@ -1,0 +1,538 @@
+.clearfix:after {
+   content: "";
+   visibility: hidden;
+   display: block;
+   height: 0;
+   clear: both;
+}
+*:first-child+html .group { zoom: 1; } /* IE7 */
+
+@font-face {
+  font-family: 'LeagueGothic';
+  src: url('/static/LeagueGothic-Regular.otf');
+} 
+
+$light-gray: #F3F3F3;
+$medium-gray: #7E7E7E;
+$dark-gray: #575757;
+
+$small-font-size: 24pt;
+$medium-font-size: 30pt;
+$large-font-size: 60pt;
+
+%links {
+	&:link, &:visited {
+		text-decoration: none;
+	}
+	&:hover, &:active {
+		text-decoration: underline;
+	}
+}
+
+$spacing: 10px;
+$site-width: 1000px;
+
+body {
+	background-color: $light-gray;
+	font-family: 'LeagueGothic', arial, sans-serif;
+}
+
+#header {
+	width: $site-width;
+	margin: $spacing auto;
+	text-transform: uppercase;
+	color: $medium-gray;
+
+	h1 {
+		font-size: $medium-font-size;
+		color: $dark-gray;
+
+		// TODO: Make a proper homepage.
+		// a {
+		// 	@extend %links;
+		// 	color: $dark-gray;
+		// }
+	}
+}
+#login {
+	float: right;
+	text-align: right;
+
+	img {
+		vertical-align: top;
+	}
+	& > li {
+		display: inline;
+
+		& + li {
+			margin-left: $spacing;
+		}
+	}
+}
+#client-options {
+	float: right;
+	font-size: $small-font-size;
+	text-transform: uppercase;
+	text-align: right;
+
+	ul {
+		display: inline;
+
+		& > li {
+			display: inline;
+			margin-left: $spacing;
+
+			& > a {
+				@extend %links;
+				color: $medium-gray;
+			}
+		}
+	}
+}
+#client-name {
+	margin-right: $spacing;
+}
+
+#site {
+	background-color: white;
+
+	& > div {
+		width: $site-width;
+		margin: 0 auto;
+		position: relative;
+		min-height: 415px;
+		padding: $spacing 0;
+	}
+}
+
+#footer {
+	width: $site-width;
+	margin: $spacing auto;
+	font-size: $small-font-size;
+	text-transform: uppercase;
+	text-align: right;
+
+	& > li {
+		display: inline;
+
+		& + li {
+			margin-left: $spacing;
+		}
+		& > a {
+			@extend %links;
+			color: $medium-gray;
+		}
+	}
+}
+
+$sidebar-width: 200px;
+#sidebar {
+	position: absolute;
+	left: 0;
+	right: 0;
+	width: $sidebar-width;
+	font-size: $medium-font-size;
+	text-transform: uppercase;
+
+	h3 {
+		background-color: $light-gray;
+		color: $medium-gray;
+		display: inline;
+	}
+	a {
+		@extend %links;
+		color: $dark-gray;
+	}
+	& > ol > li + li {
+		margin-top: $spacing;	
+	}
+	ol ol li {
+		margin-top: $spacing / 2;
+		margin-left: 2 * $spacing;
+	}
+}
+
+#content {
+	width: $site-width - $sidebar-width;
+	margin-left: $sidebar-width;
+}
+
+.header {
+	color: $dark-gray;
+	font-size: $medium-font-size;
+	text-transform: uppercase;
+	margin-bottom: $spacing / 2;
+}
+div.counts {
+	text-transform: none;
+
+	&.selected {
+		color: $dark-gray;
+	}
+}
+img.league-logo {
+	margin-bottom: -2px;
+}
+
+%bordered-data {
+	$border: 2px solid $medium-gray;
+
+	border-top: $border;
+	border-bottom: $border;
+	padding: $spacing;
+	background-color: $light-gray;
+	color: $medium-gray;
+}
+.main-data {
+	@extend %bordered-data;
+	font-size: $medium-font-size;
+	text-transform: uppercase;
+	margin-bottom: 2 * $spacing;
+
+	& > div {
+		margin-top: round($small-font-size / 4);
+	}
+	h3 {
+		color: $dark-gray;
+		font-size: $large-font-size;
+		text-transform: uppercase;
+	}
+	div.counts img.togglable {
+		cursor: pointer;
+	}
+}
+%text-data {
+	@extend %bordered-data;
+	color: $dark-gray;
+	font-family: 'Vollkorn', serif;
+	font-size: 18pt;
+	line-height: 120%;
+
+	a {
+		color: $dark-gray;
+	}
+	h3 {
+		margin-top: $spacing;
+		font-family: 'LeagueGothic';
+		font-size: $medium-font-size;
+		text-transform: uppercase;
+		line-height: 1;
+		&:first-child {
+			margin-top: 0;
+		}
+	}
+	%list {
+		margin-left: 3 * $spacing;
+	}
+	ol {
+		@extend %list;
+		list-style-type: decimal;
+	}
+	ul {
+		@extend %list;
+		list-style-type: square;
+	}
+}
+.footer-data {
+	@extend %text-data;
+}
+.explanation {
+	@extend %text-data;
+}
+
+%match-main-data {
+	img.game-logo {
+		margin-top: 7px;
+		float: left;
+	}
+	div.teams {
+		margin-left: 60px + $spacing;
+		color: $medium-gray;
+		text-transform: none;
+
+		.name {
+			text-transform: uppercase;
+			color: $dark-gray;
+		}
+		& > span {
+			display: inline-block;
+			white-space: nowrap;
+		}
+	}
+}
+#match {
+	@extend %match-main-data;
+
+	div.counts {
+		float: right;
+	}
+	a {
+		@extend %links;
+	}
+}
+#next-match {
+	@extend %match-main-data;
+	display: block;
+	text-decoration: none;
+	background-color: transparent;
+
+	&:hover {
+		background-color: $light-gray;
+	}
+}
+#team {
+	img.external-link {
+		margin-top: -3px;
+	}
+	div.counts {
+		float: right;
+	}
+}
+#streamer {
+	img.picture {
+		float: right;
+	}
+}
+
+#about {
+	& > img {
+		float: left;
+	}
+	& > div {
+		margin-left: 300px + round(1.5 * $spacing);
+
+		ul {
+			font-family: 'LeagueGothic';
+			font-size: $small-font-size;
+			text-transform: uppercase;
+			margin-left: 0;
+			list-style-type: none;
+
+			a {
+				@extend %links;
+			}
+			li {
+				margin-top: $spacing;
+			}
+			img {
+				margin-right: $spacing;
+			}
+		}
+	}
+}
+
+ul.data-list {
+	$data-list-vert-spacing: $spacing / 2;
+
+	margin-top: $data-list-vert-spacing;
+	color: $medium-gray;
+	font-size: $medium-font-size;
+	text-transform: uppercase;
+
+	li {
+		$border: 2px solid $light-gray;
+
+		border-bottom: $border;
+
+		&:first-child {
+			border-top: $border;
+		}
+		a {
+			display: block;
+			padding: $data-list-vert-spacing $spacing;
+			text-decoration: none;
+			color: $medium-gray;
+
+			&:hover {
+				background-color: $light-gray;
+			}
+			div.counts {
+				float: right;
+			}
+		}
+	}
+}
+
+ul.team-list {
+	img.game-logo {
+		float: left;
+		margin-top: 2px;
+	}
+	span.name {
+		display: block;
+		margin-left: $spacing + 28px;
+	}
+}
+ul.streamer-list {
+	img.picture {
+		float: left;
+		margin-top: 4px;
+	}
+	span.name {
+		display: block;
+		margin-left: $spacing + 28px;
+	}
+}
+ul.match-list {
+	img.game-logo {
+		float: left;
+		margin-top: 2px;
+
+		& + div {
+			margin-left: $spacing + 28px;
+		}
+	}
+	div.teams {
+		text-transform: none;
+		span.name {
+			text-transform: uppercase;
+		}
+	}
+	div.datetime {
+		font-size: $small-font-size;
+	}
+}
+
+#pagination {
+	display: inline-block;
+	margin-top: $spacing;
+
+	.direction {
+		display: block;
+		float: left;
+		text-transform: uppercase;
+		font-size: $small-font-size;
+
+		& + .direction {
+			margin-left: 2 * $spacing;
+		}
+	}
+	a {
+		@extend %links;
+		color: $medium-gray;
+	}
+	span {
+		color: $light-gray;
+	}
+}
+
+// Styles that override those in the Select2 stylesheet.
+$select2-font-size: $small-font-size;
+$select2-height: round(1.3 * $select2-font-size);
+
+%select2-height {
+	height: $select2-height;
+	line-height: $select2-height;
+}
+%select2-font {
+	font-family: 'LeagueGothic';
+	font-size: $select2-font-size;
+	text-transform: uppercase;
+}
+%select2-highlighted {
+	background: $light-gray;
+	color: $dark-gray;
+}
+
+.select2-container .select2-choice {
+	@extend %select2-height;
+	font-size: $select2-font-size;
+	color: $dark-gray;
+}
+.select2-search input {
+	@extend %select2-font;
+	color: $dark-gray;
+}
+
+.select2-results {
+	color: $medium-gray;
+
+	.select2-result-label {
+		@extend %select2-font;
+		@extend %select2-height;
+	}
+	.select2-highlighted {
+		@extend %select2-highlighted;
+	}
+	.select2-no-results {
+		@extend %select2-font;
+		@extend %select2-highlighted;
+	}
+}
+
+#time-compare {
+	h2 {
+		color: $dark-gray;
+	}
+}
+
+$settings-width: 600px;
+$save-settings-failure-background-color: #fcf27a;
+%settings-block {
+	text-transform: uppercase;
+	color: $dark-gray;
+}
+%settings-message {
+	width: $settings-width - $spacing;
+	padding: $spacing / 2;
+}
+%save-settings-status {
+	@extend %settings-block;
+	@extend %settings-message;
+	font-size: $medium-font-size;
+	margin-bottom: 2 * $spacing;
+}
+div.save-settings-success {
+	@extend %save-settings-status;
+	background-color: #d6ec94;
+}
+div.save-settings-failure {
+	@extend %save-settings-status;
+	background-color: $save-settings-failure-background-color;
+}
+
+#settings {
+	$setting-spacing: 2 * $spacing;
+
+	& > div {
+		text-transform: uppercase;
+
+		h2 {
+			color: $dark-gray;
+			font-size: $medium-font-size;
+		}
+		select {
+			width: $settings-width;
+		}
+		& + div {
+			margin-top: $setting-spacing;
+		}
+		ul.errors {
+			@extend %settings-block;
+			font-size: $small-font-size;
+
+			li {
+				@extend %settings-message;
+				background-color: $save-settings-failure-background-color;
+				margin-top: $spacing / 2;
+			}
+		}
+	}
+
+	input[type="submit"] {
+		font-family: 'LeagueGothic', arial, sans-serif;
+		font-size: $medium-font-size;
+		text-transform: uppercase;
+		background-color: $light-gray;
+		color: $medium-gray;
+		margin-top: $setting-spacing;
+		padding: 0 $spacing;
+		border: 1px solid $medium-gray;
+
+		&:hover {
+			cursor: pointer;
+			color: $dark-gray;
+		}
+	}
+}
+

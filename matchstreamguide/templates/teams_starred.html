@@ -1,0 +1,17 @@
+{% extends "teams.html" %}
+
+{% set found_header_value = "Starred teams" %}
+
+{% block page_name %}{{ found_header_value|title }}{% endblock page_name %}
+{% block found_header %}{{ found_header_value }}{% endblock found_header %}
+{% block missing_header %}No starred teams found :({% endblock missing_header %}
+
+{% block missing %}
+	{{ super() }}
+
+	{% call macros.write_star_explanation("teams", g.logged_in) %}
+		<li>{{ macros.write_star_teams_reason() }}</li>
+		<li>{{ macros.write_star_teams_effect() }}, then that match appears on <a href="{{ url_for('viewer_guide') }}">your guide</a>.</li>
+	{% endcall %}
+{% endblock missing %}
+

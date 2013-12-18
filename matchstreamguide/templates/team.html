@@ -1,0 +1,56 @@
+{% extends "layout.html" %}
+{% import "macros.html" as macros %}
+
+{% block page_name %}{{ team.name }}{% endblock page_name %}
+
+{% block content %}
+	<div id="team" class="main-data clearfix">
+		<h3>
+			{{ macros.write_large_game_icon(team.game) }}
+			{{ team.name }}
+			{{ macros.write_large_external_link(team|team_external_url) }}
+		</h3>
+
+		{{ macros.write_star_with_count(team.is_starred, team.num_stars, logged_in=g.logged_in) }}
+		<div class="division">
+			{{ macros.write_division(team.game, team.division, true) }}
+		</div>
+	</div>
+
+	{% if team.matches %}
+		<h3 class="header">Upcoming matches:</h3>
+		<ul class="data-list match-list">
+		{% for match in team.matches %}
+			<li>
+				<a href="{{ url_for('match_details', match_id=match|team_match_url_part(team)) }}">
+					{{ macros.write_star_with_count(match.is_starred, match.num_stars) }}
+					<div class="teams">
+						vs
+						<span class="name">
+							{% if match.team1 %}
+								{{ match.team1.name }}
+							{% elif match.team2 %}
+								{{ match.team2.name }}
+							{% endif %}
+						</span>
+					</div>
+					<div class="datetime">{{ match.time|readable_datetime }}</div>
+				</a>
+			</li>
+		{% endfor %}
+		</ul>
+
+		{% set prev_query_params = ('prev_time', team.prev_time, 'prev_match_id', team.prev_match_id) %}
+		{% set next_query_params = ('next_time', team.next_time, 'next_match_id', team.next_match_id) %}
+		{{ macros.write_earlier_later_pagination(prev_query_params, next_query_params) }}
+	{% else %}
+		<h3 class="header">No upcoming matches</h3>
+	{% endif %}
+
+	{% if g.logged_in %}
+		<script>
+			$.addStarRollover($("#team div.counts img"))
+		</script>
+	{% endif %}
+{% endblock content %}
+

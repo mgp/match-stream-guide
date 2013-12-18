@@ -1,0 +1,47 @@
+{% extends "layout.html" %}
+{% import "macros.html" as macros %}
+
+{% set next_match = calendar.next_match %}
+
+{% block head %}
+	{{ macros.write_font_stylesheet() if not next_match }}
+{% endblock head %}
+
+{% block content %}
+	{% if next_match %}
+		<h2 class="header">Next match {{ next_match.time|readable_timedelta }}:</h2>
+		<a id="next-match" class="main-data clearfix" href="{{ url_for('match_details', match_id=next_match|match_url_part) }}">
+			<h3>
+				{{ macros.write_large_game_icon(next_match.game) }}
+				<div class="teams">
+					<span>
+						<span class="name">{{ next_match.team1.name }}</span>
+						vs 
+					</span>
+					<span class="name">{{ next_match.team2.name }}</span>
+				</div>
+			</h3>
+
+			<div class="datetime">{{ next_match.time|readable_datetime }}</div>
+			<div class="division">
+				{{ macros.write_division(next_match.game, next_match.division, false) }}
+			</div>
+		</a>
+
+		<h3 class="header">Upcoming streamed matches:</h2>
+		<ul class="data-list match-list">
+		{% for match in calendar.matches %}
+			{{ macros.write_match_list_element(match, false) }}
+		{% endfor %}
+		</ul>
+
+		{% set prev_query_params = ('prev_time', calendar.prev_time, 'prev_match_id', calendar.prev_match_id) %}
+		{% set next_query_params = ('next_time', calendar.next_time, 'next_match_id', calendar.next_match_id) %}
+		{{ macros.write_earlier_later_pagination(prev_query_params, next_query_params) }}
+	{% else %}
+		{% block missing %}
+			<h3 class="header">No upcoming streamed matches found :(</h3>
+		{% endblock missing %}
+	{% endif %}
+{% endblock content %}
+

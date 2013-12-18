@@ -1,0 +1,26 @@
+{% extends "layout.html" %}
+{% import "macros.html" as macros %}
+
+{% block head %}
+	{{ macros.write_font_stylesheet() if not streamers }}
+{% endblock head %}
+
+{% block content %}
+	{% if teams %}
+		<h3 class="header">{% block found_header %}{% endblock found_header %}:</h3>
+		<ul class="data-list team-list">
+		{% for team in teams %}
+			{{ macros.write_team_list_element(team) }}
+		{% endfor %}
+		</ul>
+
+		{% set prev_query_params = ('prev_name', prev_name, 'prev_team_id', prev_team_id) %}
+		{% set next_query_params = ('next_name', next_name, 'next_team_id', next_team_id) %}
+		{{ macros.write_previous_next_pagination(prev_query_params, next_query_params) }}
+	{% else %}
+		{% block missing %}
+			<h3 class="header">{% block missing_header %}{% endblock missing_header %}</h3>
+		{% endblock missing %}
+	{% endif %}
+{% endblock content %}
+
